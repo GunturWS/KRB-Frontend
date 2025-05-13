@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Header } from "../../components/Header/Header";
-
-import { dataTumbuhan } from "../../constants/dataTumbuhan";
 import { Footer } from "../../components/Footer/Footer";
-import { FiSearch, FiFilter } from "react-icons/fi"; // Import icon Search dari react-icons
-import { motion } from "framer-motion"; // Pastikan import ini ada di paling atas (kalau belum)
+import { FiSearch, FiFilter } from "react-icons/fi";
 import { CardKonservasi } from "../../components/Konservasi Components/CardKonservasi";
 import { DropDownKategori } from "../../components/Konservasi Components/DropDownKategori";
+import { getAllPlants } from "../../redux/actions/plantActions";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion"; // ⬅️ tambahkan ini
 
 const itemsPerPage = 9;
 
@@ -15,44 +15,63 @@ const Konservasi = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Update filteredData
-  const filteredData = dataTumbuhan.filter((item) => {
-    const query = searchQuery.toLowerCase();
-    const matchSearch =
-      item.title.toLowerCase().includes(query) ||
-      item.description?.toLowerCase().includes(query) ||
-      item.latinName?.toLowerCase().includes(query) ||
-      item.habitat?.toLowerCase().includes(query);
+  const [currentItems, setCurrentItems] = useState([]);
+  const dispatch = useDispatch();
+  const { plants } = useSelector((state) => state.plants);
+  // console.log("Plants:", plants);
+  // const categories = useSelector((state) => state.categories.categories || []);
 
-    const matchCategory = selectedCategory === "" || item.category === selectedCategory;
+  useEffect(() => {
+    dispatch(getAllPlants());
+  }, [dispatch]);
 
-    return matchSearch && matchCategory;
-  });
+  // ⬇️ Filter data sebelum digunakan
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(plants)) return [];
 
-  // // Filter data berdasarkan banyak field
-  // const filteredData = dataTumbuhan.filter((item) => {
-  //   const query = searchQuery.toLowerCase();
-  //   return (
-  //     item.title.toLowerCase().includes(query) ||
-  //     item.description?.toLowerCase().includes(query) ||
-  //     item.latinName?.toLowerCase().includes(query) ||
-  //     item.habitat?.toLowerCase().includes(query)
-  //   );
-  // });
+    return plants.filter((item) => {
+      const query = searchQuery.toLowerCase();
+      const matchSearch =
+        item.nama_tumbuhan?.toLowerCase().includes(query) ||
+        item.nama_indonesia?.toLowerCase().includes(query) ||
+        item.deskripsi?.toLowerCase().includes(query);
 
-  // Pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+      const matchCategory =
+        selectedCategory === "" ||
+        (Array.isArray(item.kategori) &&
+          item.kategori.some((cat) => {
+            if (typeof cat === "object" && cat.id) {
+              return cat.id === selectedCategory;
+            }
+            return cat === selectedCategory;
+          }));
+
+      return matchSearch && matchCategory;
+    });
+  }, [plants, searchQuery, selectedCategory]);
+  // console.log("Filtered Data:", filteredData);
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset ke halaman pertama saat filter berubah
+  }, [searchQuery, selectedCategory]);
+
+  useEffect(() => {
+    if (filteredData.length === 0) {
+      setCurrentItems([]); // Kosongkan
+      return;
+    }
+
+    const paginated = filteredData.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+    setCurrentItems(paginated);
+  }, [filteredData, currentPage]);
 
   const pageNumbers = Array.from(
     { length: Math.ceil(filteredData.length / itemsPerPage) },
     (_, i) => i + 1
   );
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery]);
 
   return (
     <>
@@ -90,12 +109,19 @@ const Konservasi = () => {
         {/* Card List */}
         {currentItems.length > 0 ? (
           <div className="mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 max-w-7xl w-full px-4">
-            {currentItems.map((program) => (
-              <CardKonservasi key={program.href} {...program} />
+            {currentItems.map((item, index) => (
+              <CardKonservasi
+                key={index}
+                image_path={item.image_path}
+                nama_tumbuhan={item.nama_tumbuhan}
+                // nama_indonesia={item.nama_indonesia}
+                kategori={item.kategori}
+                href={`/detail-konservasi/${item.dataset_id}`}
+              />
             ))}
           </div>
         ) : (
-          <div className="flex flex-1 flex-col items-center justify-center text-center text-gray-500 space-y-4 flex-grow">
+          <div className="flex flex-1 flex-col items-center justify-center text-center text-gray-500 space-y-4 flex-grow relative min-h-[300px]">
             {/* Animasi Icon */}
             <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
               <FiSearch className="text-6xl text-blue-400" />

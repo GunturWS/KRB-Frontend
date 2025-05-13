@@ -1,12 +1,24 @@
-# React + Vite
+# 🌿 Kebun Raya Balikpapan Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ini adalah proyek website Tugas Akhir Guntur Wisnu Saputra untuk **Kebun Raya Balikpapan**, dibangun menggunakan React dan Vite. Website ini bertujuan untuk menyediakan informasi seputar konservasi, edukasi, lokasi, dan pengelolaan Kebun Raya Balikpapan kepada masyarakat umum.
 
-Currently, two official plugins are available:
+## 🚀 Fitur Utama
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Halaman Beranda informatif dan responsif
+- Halaman Konservasi dengan informasi mengenai upaya pelestarian flora
+- Halaman Tentang Kami yang menjelaskan visi & misi serta tujuan kebun raya
+- Halaman Lokasi dan Kontak dengan peta dan info akses
+- Navigasi responsif untuk desktop dan mobile
+- Gambar dan konten yang dioptimalkan
+- Scroll ke atas otomatis saat navigasi antar halaman
 
-## Expanding the ESLint configuration
+## 🛠️ Teknologi yang Digunakan
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- ⚛️ React
+- ⚡ Vite
+- 💨 Tailwind CSS
+- 📦 React Router DOM
+- 🌐 Deployment-ready untuk Vercel/Netlify
+
+## 📂 Struktur Proyek (Ringkasan)
+

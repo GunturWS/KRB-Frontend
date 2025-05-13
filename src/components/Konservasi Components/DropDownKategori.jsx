@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiChevronDown } from "react-icons/fi";
-import { categories } from "../../constants/categori";
 import { FiFilter } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCategory } from "../../redux/actions/categoryActions";
 
 export const DropDownKategori = ({ selectedCategory, setSelectedCategory }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  console.log("Selected Category ID:", selectedCategory);
+
+  const categories = useSelector((state) => state.categories.categories || []);
+
+  useEffect(() => {
+    dispatch(getAllCategory());
+  }, [dispatch]);
+
+  console.log("Loaded Categories:", categories);
+  // console.log("Categories:", categories); // Debugging categories
 
   return (
     <div className="relative w-full max-w-[180px] text-sm z-[30]">
@@ -17,10 +29,10 @@ export const DropDownKategori = ({ selectedCategory, setSelectedCategory }) => {
         className="relative z-10 w-full flex justify-between items-center rounded-xl border border-gray-300 bg-white py-2.5 px-4 shadow-md transition hover:ring-1 hover:ring-green-400"
       >
         <FiFilter className="text-lg" />
-        {/* Memastikan teks kategori tidak mempengaruhi layout */}
         <span className="truncate">
-          {categories.find((cat) => cat.value === selectedCategory)?.label ?? "Pilih Kategori"}
+          {categories.find((cat) => cat.id === selectedCategory)?.nama_kategori ?? "Pilih Kategori"}
         </span>
+
         <FiChevronDown className={`ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
@@ -35,15 +47,15 @@ export const DropDownKategori = ({ selectedCategory, setSelectedCategory }) => {
           >
             {categories.map((cat) => (
               <li
-                key={cat.value + cat.label}
+                key={cat.id}
                 onClick={() => {
-                  setSelectedCategory(cat.value);
+                  setSelectedCategory(cat.id);
                   setIsOpen(false);
                 }}
                 className="cursor-pointer px-4 py-2 hover:bg-green-50 transition truncate"
-                title={cat.label} // Tooltip saat hover
+                title={cat.nama_kategori}
               >
-                <span className="block truncate">{cat.label}</span>
+                <span className="block truncate">{cat.nama_kategori}</span>
               </li>
             ))}
           </motion.ul>
