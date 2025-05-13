@@ -1,33 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 import logoKebunRayaBalikpapan from "../../../public/images/kebunraya.jpg";
 import pilarList from "../../constants/pilarList";
 import { Link } from "react-router-dom";
 import { FaLeaf } from "react-icons/fa";
+import { MemindaiPopUp } from "../../components/MemindaiComponent/MemindaiPopUp";
 
 const Beranda = () => {
+  const [showPopup, setShowPopup] = useState(false);
+
   return (
     <>
       <Header />
       {/* <div className="bg-[#F5F7FA]"> */}
       <section className="m-auto mt-12 grid grid-rows-[max-content_max-content] items-center gap-12 px-4 sm:container md:items-center lg:grid-cols-[1.5fr_1fr] lg:grid-rows-none lg:px-12 2xl:grid-cols-[1fr_1fr]">
         <div className="flex flex-col items-center gap-6 text-center text-gray-800 lg:items-start lg:text-left">
-          <div className="flex flex-col gap-4">
-            <h3 className="text-sm lg:text-base text-gray-500">Wisata Balikpapan</h3>
+          <div className="flex flex-col gap-1">
+            <h3 className="text-sm lg:text-base text-gray-500">Destinasi Wisata Alam</h3>
             <div className="flex flex-col gap-1">
               <h1 className="text-2xl font-bold sm:text-3xl lg:text-5xl text-gray-900">
-                Kebun Raya Balikpapan
+                KEBUN RAYA BALIKPAPAN
               </h1>
-              <h2 className="text-lg font-normal opacity-80">Kalimantan Timur</h2>
+              <h2 className="text-lg font-normal opacity-80">Balikpapan, Kalimantan Timur</h2>
             </div>
           </div>
           <p className="text-sm md:text-base font-[Plus_Jakarta_Sans] lg:text-lg xs:w-10/12 sm:w-4/6 md:w-11/12 lg:w-5/6 2xl:w-10/12">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard dummy text ever since the 1500s, when an unknown
-            printer took a galley of type and scrambled it to make a type specimen book. It has
-            survived not only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged.
+            Kebun Raya Balikpapan merupakan salah satu objek wisata unggulan di Kota Balikpapan.
+            Pembangunannya merupakan hasil kerja sama antara Pemerintah Kota Balikpapan, Pusat
+            Konservasi Tumbuhan Kebun Raya Bogor, dan Balai Besar Penelitian Dipterocarpaceae
+            Kementerian Kehutanan.
           </p>
           <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
             Explore More
@@ -47,21 +49,20 @@ const Beranda = () => {
       </section>
 
       <section className="mt-20 flex flex-col items-center gap-6 w-full px-4 md:px-6 py-12 bg-white rounded-xl">
-        {/* Judul */}
         <h1 className="max-w-screen-lg text-center text-black text-3xl sm:text-4xl font-semibold leading-snug sm:leading-tight">
           Ingin Melakukan Pengecekan Tumbuhan?
         </h1>
-
-        {/* Deskripsi */}
         <p className="max-w-screen-lg text-center text-gray-600 text-sm sm:text-base font-medium leading-relaxed mb-6">
           Cek tumbuhan di sekitar Anda dengan mudah! Temukan informasi menarik seputar tumbuhan dan
           alam melalui sistem yang kami tawarkan. Lakukan pemindaian tumbuhan dan lihat koleksi kami
           yang lengkap.
         </p>
 
-        {/* Tombol Memindai & Lihat Tumbuhan */}
         <div className="flex flex-col sm:flex-row gap-6 w-full max-w-screen-lg">
-          <button className="w-full sm:w-1/2 h-14 sm:h-16 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center text-black text-base md:text-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out">
+          <button
+            onClick={() => setShowPopup(true)}
+            className="w-full sm:w-1/2 h-14 sm:h-16 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center text-black text-base md:text-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+          >
             Memindai Tumbuhan
           </button>
           <Link
@@ -73,27 +74,6 @@ const Beranda = () => {
         </div>
       </section>
 
-      {/* Section 5 Pilar */}
-      {/* <section className="mt-20 w-full px-4 md:px-6 py-12 flex flex-col items-center">
-        <h2 className="max-w-screen-lg text-3xl sm:text-4xl font-semibold text-center text-gray-900 font-poppins mb-10 sm:mb-14">
-          5 Pilar Kebun Raya
-        </h2>
-        <div className="w-full max-w-screen-lg grid gap-8 sm:gap-10 md:grid-cols-2">
-          {pilarList.map((pilar, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition duration-300 ease-in-out"
-            >
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 font-poppins mb-2">
-                {pilar.title}
-              </h3>
-              <p className="text-sm sm:text-base text-gray-700 text-justify font-plusJakartaSans leading-relaxed">
-                {pilar.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section> */}
       <section className="mt-0 w-full px-4 md:px-6 py-12 flex flex-col items-center bg-gradient-to-r  rounded-xl">
         <h2 className="max-w-screen-lg text-3xl sm:text-4xl font-bold text-center text-black font-poppins mb-10 sm:mb-14">
           -5 Pilar Kebun Raya-
@@ -117,6 +97,9 @@ const Beranda = () => {
           ))}
         </div>
       </section>
+
+      {/* Tampilkan popup jika tombol diklik */}
+      {showPopup && <MemindaiPopUp onClose={() => setShowPopup(false)} />}
       <Footer />
 
       {/* </div> */}
