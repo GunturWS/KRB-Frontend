@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { RiMenuLine, RiCloseLine } from "react-icons/ri";
-import { NavLink, Link } from "react-router-dom"; // Import NavLink
+import { NavLink, Link } from "react-router-dom";
+import KebunRayaBalikpapanlogo from "../../../public/images/KebunRayaBalikpapanlogo.png";
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -9,12 +10,12 @@ export const Header = () => {
     setMenuOpen((prevState) => !prevState);
   };
 
-  // Daftar link navigasi
   const navLinks = [
     { to: "/", label: "Beranda" },
     { to: "/konservasi", label: "Konservasi" },
     { to: "/tentang-kami", label: "Tentang Kami" },
-    { to: "/lokasi", label: "Location & Contact" },
+    { to: "/lokasi-kontak", label: "Location & Contact" },
+    // { to: "/faq-fasilitas", label: "FAQ & Fasilitas" },
   ];
 
   return (
@@ -22,11 +23,7 @@ export const Header = () => {
       <div className="flex w-full items-center justify-between p-4 sm:container mx-auto">
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 lg:gap-4">
-          <img
-            src="https://images.unsplash.com/photo-1662915367942-b78963fcc8ea?q=80&w=1970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Logo"
-            className="h-8 w-auto md:h-12"
-          />
+          <img src={KebunRayaBalikpapanlogo} alt="Logo" className="h-8 w-auto md:h-12" />
         </Link>
 
         {/* Menu Links */}
@@ -38,13 +35,12 @@ export const Header = () => {
           <ul className="header__list flex flex-col gap-6 md:flex-row md:gap-8">
             {navLinks.map(({ to, label }) => (
               <li key={to}>
-                {/* Use NavLink to apply active class */}
                 <NavLink
                   to={to}
                   className={({ isActive }) =>
                     isActive
-                      ? "text-blue-500 font-semibold border-b-2 border-blue-500" // Active link style
-                      : "text-white hover:text-gray-400 md:text-gray-900 md:hover:text-gray-600"
+                      ? "text-[#629f80] font-semibold border-b-2 border-emerald-500" // Warna aktif hijau emerald
+                      : "text-white hover:text-emerald-400 md:text-gray-900 md:hover:text-emerald-600"
                   }
                 >
                   {label}
@@ -56,7 +52,7 @@ export const Header = () => {
 
         {/* Menu Toggle for Mobile */}
         <div
-          className="header__toggle inline-flex cursor-pointer p-1 text-2xl md:hidden"
+          className="header__toggle inline-flex cursor-pointer p-1 text-2xl md:hidden text-emerald-600 hover:text-emerald-400 transition-colors"
           onClick={setMenuHandler}
         >
           {menuOpen ? <RiMenuLine /> : <RiCloseLine />}

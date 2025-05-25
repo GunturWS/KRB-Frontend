@@ -7,6 +7,7 @@ import TentangKami from "./pages/Tentang Kami/TentangKami";
 import NotFound from "./pages/NotFound/NotFound";
 import Location from "./pages/Location/Location";
 import DetailKonservasi from "./pages/Konservasi/DetailKonservasi";
+import FAQ from "./pages/FAQ/FAQ";
 import { ScrollToTop } from "./components/ScrollToTop";
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
 
           <Route path="/tentang-kami" element={<TentangKami />} />
 
-          <Route path="/lokasi" element={<Location />} />
+          <Route path="/lokasi-kontak" element={<Location />} />
+
+          {/* <Route path="/faq-fasilitas" element={<FAQ />} /> */}
 
           <Route path="*" element={<NotFound />} />
         </Routes>

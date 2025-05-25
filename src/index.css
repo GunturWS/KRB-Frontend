@@ -14,7 +14,7 @@
   animation: fadeIn 1s ease-in-out;
 }
 
-/* Animasi Slide In untuk elemen saat scroll */
+/* Animasi Slide In untuk elemen saat scroll
 @keyframes slideInUp {
   0% {
     opacity: 0;
@@ -28,8 +28,7 @@
 
 .scroll-slide-in {
   animation: slideInUp 1s ease-out forwards;
-}
-
+} */
 
 @keyframes shimmer {
   0% {
@@ -42,11 +41,11 @@
 
 .animate-shimmer {
   background-size: 200%;
-  background-image: linear-gradient(90deg, rgba(255, 204, 0, 0.7) 25%, rgba(255, 170, 0, 0.5) 50%, rgba(255, 204, 0, 0.7) 75%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 204, 0, 0.7) 25%,
+    rgba(255, 170, 0, 0.5) 50%,
+    rgba(255, 204, 0, 0.7) 75%
+  );
   animation: shimmer 1.5s infinite linear;
 }
-
-
-
-
-

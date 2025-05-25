@@ -5,9 +5,11 @@ export const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Scroll ke atas setiap kali pathname berubah
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // tambahkan efek smooth scroll
+    });
   }, [pathname]);
 
-  return null; // tidak render apapun
+  return null;
 };

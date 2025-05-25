@@ -26,7 +26,7 @@ export const getPlantById = (id) => async (dispatch) => {
     const response = await axios.get(`${api_url}/api/plants/${id}`);
     const data = response.data; // Asumsi data ada di response.data
 
-    // console.log(data);
+    console.log(data);
 
     dispatch(setPlantDetail(data)); // Menyimpan detail tanaman ke Redux
   } catch (error) {
