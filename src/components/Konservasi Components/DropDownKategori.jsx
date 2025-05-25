@@ -8,32 +8,33 @@ import { getAllCategory } from "../../redux/actions/categoryActions";
 export const DropDownKategori = ({ selectedCategory, setSelectedCategory }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
-  console.log("Selected Category ID:", selectedCategory);
-
   const categories = useSelector((state) => state.categories.categories || []);
 
   useEffect(() => {
     dispatch(getAllCategory());
   }, [dispatch]);
 
-  console.log("Loaded Categories:", categories);
-  // console.log("Categories:", categories); // Debugging categories
+  // Label yang tampil di tombol dropdown
+  const displayLabel = selectedCategory || "Semua Kategori";
 
   return (
-    <div className="relative w-full max-w-[180px] text-sm z-[30]">
-      {/* Background Glow */}
-      <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-blue-400 to-green-400 opacity-20 blur-lg"></div>
-
+    <div className="relative w-full md:max-w-[180px] text-sm z-[30]">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative z-10 w-full flex justify-between items-center rounded-xl border border-gray-300 bg-white py-2.5 px-4 shadow-md transition hover:ring-1 hover:ring-green-400"
       >
-        <FiFilter className="text-lg" />
-        <span className="truncate">
-          {categories.find((cat) => cat.id === selectedCategory)?.nama_kategori ?? "Pilih Kategori"}
-        </span>
+        {/* Container ikon kiri */}
+        <div className="flex-shrink-0 mr-2 flex items-center justify-center w-6 h-6">
+          <FiFilter className="text-lg" />
+        </div>
 
-        <FiChevronDown className={`ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        {/* Teks dengan truncate */}
+        <span className="flex-grow truncate">{displayLabel}</span>
+
+        {/* Ikon panah kanan */}
+        <div className="flex-shrink-0 ml-2 flex items-center justify-center w-6 h-6">
+          <FiChevronDown className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        </div>
       </button>
 
       <AnimatePresence>
@@ -43,19 +44,33 @@ export const DropDownKategori = ({ selectedCategory, setSelectedCategory }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-20 mt-2 w-full max-w-[180px] rounded-xl border border-gray-200 bg-white shadow-lg"
+            className="absolute z-20 mt-2 w-full md:max-w-[180px] rounded-xl border border-gray-200 bg-white shadow-lg"
           >
+            {/* Opsi Semua Kategori */}
+            <li
+              key="all"
+              onClick={() => {
+                setSelectedCategory("");
+                setIsOpen(false);
+              }}
+              className="cursor-pointer px-4 py-2 hover:bg-green-50 transition truncate"
+              title="Semua Kategori"
+            >
+              Semua Kategori
+            </li>
+
+            {/* List kategori lain */}
             {categories.map((cat) => (
               <li
                 key={cat.id}
                 onClick={() => {
-                  setSelectedCategory(cat.id);
+                  setSelectedCategory(cat.nama_kategori);
                   setIsOpen(false);
                 }}
                 className="cursor-pointer px-4 py-2 hover:bg-green-50 transition truncate"
                 title={cat.nama_kategori}
               >
-                <span className="block truncate">{cat.nama_kategori}</span>
+                {cat.nama_kategori}
               </li>
             ))}
           </motion.ul>
@@ -64,3 +79,4 @@ export const DropDownKategori = ({ selectedCategory, setSelectedCategory }) => {
     </div>
   );
 };
+
