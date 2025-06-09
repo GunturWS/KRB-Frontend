@@ -35,3 +35,27 @@ export const getPlantById = (id) => async (dispatch) => {
     dispatch(setLoading(false));
   }
 };
+
+export const addPlant = (newPlant) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const response = await axios.post(`${api_url}/api/plants`, newPlant);
+    dispatch(addPlant(response.data)); // response.data diasumsikan data tanaman baru
+  } catch (error) {
+    dispatch(setError(error.message));
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const updatePlant = (id, updatedData) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const response = await axios.put(`${api_url}/api/plants/${id}`, updatedData);
+    dispatch(updatePlant(response.data)); // response.data diasumsikan data tanaman yg sudah diupdate
+  } catch (error) {
+    dispatch(setError(error.message));
+  } finally {
+    dispatch(setLoading(false));
+  }
+};

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineClose } from "react-icons/ai";
 import { predictPlant } from "../../redux/actions/predictActions";
@@ -31,6 +31,10 @@ export const MemindaiPopUp = ({ onClose }) => {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    dispatch(resetPrediction());
+    setPreviewImage(null);
+  }, [dispatch]);
   const handleClose = () => {
     setPreviewImage(null);
     dispatch(resetPrediction());
@@ -91,7 +95,14 @@ export const MemindaiPopUp = ({ onClose }) => {
             ) : error ? (
               <span className="text-red-600">❌ {error}</span>
             ) : prediction?.prediction?.nama_tumbuhan ? (
-              <span className="text-green-700">{prediction.prediction.nama_tumbuhan}</span>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-green-700">{prediction.prediction.nama_tumbuhan}</span>
+                {prediction.prediction.akurasi_prediksi && (
+                  <span className="text-sm text-gray-500">
+                    Akurasi: {prediction.prediction.akurasi_prediksi}%
+                  </span>
+                )}
+              </div>
             ) : (
               <span className="text-gray-500">Tumbuhan tidak ditemukan</span>
             )}

@@ -179,7 +179,7 @@ const Location = () => {
                   disabled={sent}
                   className="peer w-full px-4 pt-5 pb-2 text-sm border border-green-400 rounded-xl bg-transparent text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
                 />
-                <label className="absolute left-3 bg-white px-1 text-sm text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:-translate-y-1/ peer-focus:text-green-600 peer-focus:text-xs top-0 -translate-y-1/2 text-xs">
+                <label className="absolute left-3 bg-white px-1 text-sm text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-green-600 peer-focus:text-xs top-0 -translate-y-1/2 text-xs">
                   Email Aktif
                 </label>
               </div>
@@ -220,7 +220,7 @@ const Location = () => {
               </p>
               <p className="flex justify-center items-center gap-2">
                 <Mail size={16} className="text-green-600" />
-                info@konservasi.id
+                kebunrayabppn55@gmail.com
               </p>
             </div>
           </div>
