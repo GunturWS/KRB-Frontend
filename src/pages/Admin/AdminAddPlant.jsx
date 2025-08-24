@@ -11,7 +11,7 @@ const AdminAddPlant = () => {
   });
 
   const [preview, setPreview] = useState(null);
-  const categories = ["Pohon", "Semak", "Liana", "Herba", "Tanaman Air"];
+  // const categories = ["Pohon", "Semak", "Liana", "Herba", "Tanaman Air"];
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -41,9 +41,7 @@ const AdminAddPlant = () => {
       {/* Main */}
       <main className="flex-1 pt-10 pb-16 px-6 md:ml-64 flex justify-center items-start min-h-screen">
         <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-10">
-          <h1 className="text-4xl font-bold text-green-900 mb-6 text-center">
-            Tambah Data Tumbuhan
-          </h1>
+          <h1 className="text-4xl font-bold text-green-900 mb-6 text-center">Tambah Data Tumbu</h1>
           <p className="text-center text-gray-600 mb-10">
             Silakan isi data tumbuhan yang akan ditambahkan ke database Kebun Raya Bogor.
           </p>
@@ -99,11 +97,11 @@ const AdminAddPlant = () => {
                 <option value="" disabled>
                   -- Pilih Kategori --
                 </option>
-                {categories.map((cat) => (
+                {/* {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
-                ))}
+                ))} */}
               </select>
             </div>
 

@@ -14,6 +14,12 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminAddPlant from "./pages/Admin/AdminAddPlant";
 import AdminPlant from "./pages/Admin/AdminPlant";
 import AdminCategory from "./pages/Admin/AdminCategory";
+import AdminRegiser from "./pages/Admin/AdminRegiser";
+import AdminProfile from "./pages/Admin/AdminProfile";
+import Protected from "./pages/security/Protected";
+import NoAccessToken from "./pages/security/NoAccessToken";
+import AdminRegister from "./pages/Admin/AdminRegiser";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -34,16 +40,36 @@ function App() {
           <Route path="*" element={<NotFound />} />
 
           {/* Admin */}
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/dashboard/plant" element={<AdminPlant />} />
-          <Route path="/admin/dashboard/add-plant" element={<AdminAddPlant />} />
-          <Route path="/admin/dashboard/add-category" element={<AdminCategory/>} />
+          {/* Halaman Login/Register */}
+          {/* <Route
+            path="/admin/register"
+            element={
+              <NoAccessToken>
+                <AdminRegister />
+              </NoAccessToken>
+            }
+          /> */}
+          <Route
+            path="/admin/login"
+            element={
+              <NoAccessToken>
+                <AdminLogin />
+              </NoAccessToken>
+            }
+          />
+
+          {/* Halaman Admin Dashboard */}
+          <Route element={<Protected />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard/plant" element={<AdminPlant />} />
+            <Route path="/admin/dashboard/add-plant" element={<AdminAddPlant />} />
+            <Route path="/admin/dashboard/add-category" element={<AdminCategory />} />
+            <Route path="/admin/dashboard/profile" element={<AdminProfile />} />
+          </Route>
         </Routes>
       </Router>
-      {/* <div>
-        <Beranda />
-      </div> */}
+      {/* toast container */}
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} />
     </>
   );
 }

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPlantNew } from "../../redux/actions/plantActions";
+
 import { getAllCategory } from "../../redux/actions/categoryActions";
+import { updatePlantnew } from "../../redux/actions/plantActions";
 import Swal from "sweetalert2";
 
-export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
+export const PlantModalEdit = ({ isOpen, onSubmit, onClose, editPlant }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     nama_indonesia: "",
@@ -24,20 +25,19 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
   }, [isOpen, dispatch]);
 
   useEffect(() => {
-    if (selectedPlant) {
+    if (editPlant) {
       setFormData({
-        nama_indonesia: selectedPlant.nama_indonesia || "",
-        deskripsi: selectedPlant.deskripsi || "",
+        nama_indonesia: editPlant.nama_indonesia || "",
+        deskripsi: editPlant.deskripsi || "",
         image_path: null,
-        source: selectedPlant.source || "",
-        nama_tumbuhan: selectedPlant.nama_tumbuhan || "",
-        category_ids: selectedPlant.category_ids?.[0] || "",
+        source: editPlant.source || "",
+        nama_tumbuhan: editPlant.nama_tumbuhan || "",
+        category_ids: editPlant.category_ids
+          ? editPlant.category_ids.map((cat) => cat.id) // ambil ID saja
+          : [],
       });
 
-      // set preview dari URL gambar yang sudah ada
-      if (selectedPlant.image_path) {
-        setPreview(selectedPlant.image_path);
-      }
+      if (editPlant.image_path) setPreview(editPlant.image_path);
     } else {
       setFormData({
         nama_indonesia: "",
@@ -45,11 +45,11 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
         image_path: null,
         source: "",
         nama_tumbuhan: "",
-        category_ids: "",
+        category_ids: [],
       });
       setPreview(null);
     }
-  }, [selectedPlant]);
+  }, [editPlant]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,40 +58,33 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!editPlant?.id) return;
 
     try {
-      // dispatch tambah tanaman
-      await dispatch(addPlantNew(formData));
+      // kalau image_path null, pakai image_path lama dari editPlant
+      const payload = {
+        id: editPlant.id,
+        ...formData,
+        image_path: formData.image_path || editPlant.image_path,
+      };
 
-      // panggil onSubmit agar parent refresh list
+      await dispatch(updatePlantnew(payload));
+
+      // panggil onSubmit untuk parent refresh
       onSubmit();
 
-      // tampilkan success alert
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: `Tanaman ${
-          formData.nama_tumbuhan || formData.nama_indonesia
-        } berhasil ditambahkan ✅`,
+        text: `Tanaman ${formData.nama_tumbuhan || formData.nama_indonesia} berhasil diupdate ✅`,
         timer: 1500,
         showConfirmButton: false,
       });
-
-      // reset form
-      setFormData({
-        nama_indonesia: "",
-        deskripsi: "",
-        image_path: null,
-        source: "",
-        nama_tumbuhan: "",
-        category_ids: "",
-      });
-      setPreview(null);
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Gagal!",
-        text: error.response?.data?.error || error.message || "Gagal menambahkan tanaman ❌",
+        text: error.response?.data?.error || error.message || "Gagal mengupdate tanaman ❌",
       });
     }
   };
@@ -101,7 +94,7 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
       <div className="bg-white p-6 rounded-xl max-w-lg w-full shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Tambah Tanaman</h2>
+        <h2 className="text-xl font-bold mb-4">Edit Tumbuhan</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -140,17 +133,28 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium">ID Kategori</label>
+            <label className="block mb-1 font-medium">Kategori Saat Ini</label>
+            <p className="mb-2 text-gray-700">
+              {formData.category_ids.length > 0
+                ? categories
+                    .filter((cat) => formData.category_ids.includes(cat.id))
+                    .map((cat) => cat.categories)
+                    .join(", ")
+                : "Belum ada kategori"}
+            </p>
+
+            <label className="block mb-1 font-medium">Ubah Kategori</label>
             <select
               name="category_ids"
-              value={formData.category_ids}
-              onChange={handleChange}
+              value={String(formData.category_ids[0] || "")}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, category_ids: [Number(e.target.value)] }))
+              }
               className="w-full border rounded-lg px-3 py-2"
-              required
             >
               <option value="">Pilih Kategori</option>
-              {categories?.map((cat) => (
-                <option key={cat.id} value={cat.id}>
+              {categories.map((cat) => (
+                <option key={cat.id} value={String(cat.id)}>
                   {cat.nama_kategori}
                 </option>
               ))}
@@ -172,7 +176,7 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
                   }
                 }}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                required={!selectedPlant}
+                required={!editPlant}
               />
 
               {preview ? (
@@ -220,7 +224,7 @@ export const PlantModal = ({ isOpen, onSubmit, onClose, selectedPlant }) => {
               type="submit"
               className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
             >
-              {selectedPlant ? "Update" : "Simpan"}
+              {editPlant ? "Update" : "Simpan"}
             </button>
             <button
               type="button"

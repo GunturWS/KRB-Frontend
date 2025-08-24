@@ -4,7 +4,7 @@ import { Footer } from "../../components/Footer/Footer";
 import { FiSearch, FiFilter } from "react-icons/fi";
 import { CardKonservasi } from "../../components/Konservasi Components/CardKonservasi";
 import { DropDownKategori } from "../../components/Konservasi Components/DropDownKategori";
-import { getAllPlants } from "../../redux/actions/plantActions";
+import { getAllPlants, getAllPlantsNew } from "../../redux/actions/plantActions";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion"; // ⬅️ tambahkan ini
 import { ScrollToTop } from "../../components/ScrollToTop/ScrollToTop";
@@ -21,7 +21,8 @@ const Konservasi = () => {
   const { plants } = useSelector((state) => state.plants);
 
   useEffect(() => {
-    dispatch(getAllPlants());
+    // dispatch(getAllPlants());
+    dispatch(getAllPlantsNew());
   }, [dispatch]);
 
   // ⬇️ Filter data sebelum digunakan
@@ -111,16 +112,20 @@ const Konservasi = () => {
           {/* Card List */}
           {currentItems.length > 0 ? (
             <div className="mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 max-w-7xl w-full px-4">
-              {currentItems.map((item, index) => (
-                <CardKonservasi
-                  key={index}
-                  image_path={item.image_path}
-                  nama_tumbuhan={item.nama_tumbuhan}
-                  // nama_indonesia={item.nama_indonesia}
-                  kategori={item.kategori}
-                  href={`/detail-konservasi/${item.dataset_id}`}
-                />
-              ))}
+              {currentItems.map((item, index) => {
+                const globalIndex = (currentPage - 1) * itemsPerPage + index;
+                const namaTumbuhan = globalIndex < 52 ? item.dataset_name : item.nama_tumbuhan;
+
+                return (
+                  <CardKonservasi
+                    key={item.id}
+                    image_path={item.image_path}
+                    nama_tumbuhan={namaTumbuhan}
+                    kategori={item.categories}
+                    href={`/detail-konservasi/${item.id}`} // tetap pakai primary key
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center text-center text-gray-500 space-y-4 flex-grow relative min-h-[300px]">
