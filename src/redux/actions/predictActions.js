@@ -14,7 +14,7 @@ export const predictPlant = (file) => async (dispatch) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    console.log(data);
+    // console.log(data);
 
     // Data langsung objek prediksi, simpan langsung
     dispatch(setPrediction(data));

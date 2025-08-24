@@ -1,24 +1,3 @@
-// import axios from "axios";
-// import { setCategories, setLoading, setError } from "../reducers/categoryReducers";
-
-// const api_url = import.meta.env.VITE_REACT_API_ADDRESS;
-
-// export const getAllCategory = () => async (dispatch) => {
-//   try {
-//     dispatch(setLoading(true));
-//     const response = await axios.get(`${api_url}/api/categories`);
-//     const data = response.data;
-//     // console.log(" data",data);
-    
-
-//     dispatch(setCategories(data));
-//   } catch (error) {
-//     dispatch(setError(error.message));
-//   } finally {
-//     dispatch(setLoading(false));
-//   }
-// };
-
 import axios from "axios";
 import {
   setCategories,
@@ -49,7 +28,8 @@ export const addCategoryAction = (newCategory) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const response = await axios.post(`${api_url}/api/categories/add`, newCategory);
-    dispatch(addCategory(response.data));
+    console.log("Response:", response.data); // debug dulu
+    dispatch(addCategory(response.data.data)); // ambil property data saja
   } catch (error) {
     dispatch(setError(error.message));
   } finally {
@@ -62,7 +42,8 @@ export const updateCategoryAction = (id, updatedData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const response = await axios.put(`${api_url}/api/categories/${id}`, updatedData);
-    dispatch(updateCategory(response.data));
+    console.log("Update response:", response.data); // debug
+    dispatch(updateCategory(response.data.data)); // ambil property data saja
   } catch (error) {
     dispatch(setError(error.message));
   } finally {
@@ -74,7 +55,9 @@ export const updateCategoryAction = (id, updatedData) => async (dispatch) => {
 export const deleteCategoryAction = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    await axios.delete(`${api_url}/api/categories/${id}`);
+    const response = await axios.delete(`${api_url}/api/categories/${id}`);
+    console.log("Delete response:", response.data); // debug
+    // Kirim ID ke reducer, bukan seluruh response
     dispatch(deleteCategory(id));
   } catch (error) {
     dispatch(setError(error.message));

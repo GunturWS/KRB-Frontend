@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { Sidebar } from "../../components/AdminComponent/Sidebar";
 import { EditCategoryModal } from "../../components/AdminComponent/EditCategoryModal";
-import { useDispatch, useSelector } from "react-redux";
 import {
   addCategoryAction,
   deleteCategoryAction,
   getAllCategory,
   updateCategoryAction,
 } from "../../redux/actions/categoryActions";
+import Swal from "sweetalert2";
 
 const AdminCategory = () => {
   const dispatch = useDispatch();
-
   const categories = useSelector((state) => state.categories.categories || []);
 
   const [newCategory, setNewCategory] = useState("");
   const [editCategory, setEditCategory] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     dispatch(getAllCategory());
@@ -25,112 +26,219 @@ const AdminCategory = () => {
   const handleAdd = async () => {
     if (!newCategory.trim()) return;
 
-    await dispatch(addCategoryAction({ nama_kategori: newCategory }));
-    dispatch(getAllCategory());
-    setNewCategory("");
+    try {
+      await dispatch(addCategoryAction({ nama_kategori: newCategory }));
+      dispatch(getAllCategory());
+      setNewCategory("");
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Kategori berhasil ditambahkan ✅",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error("Error adding category:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Kategori gagal ditambahkan ❌",
+      });
+    }
   };
 
   const handleDelete = (id) => {
-    const confirmed = confirm("Yakin ingin menghapus kategori ini?");
-    if (confirmed) {
-      dispatch(deleteCategoryAction(id));
+    Swal.fire({
+      title: "Yakin ingin menghapus kategori ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await dispatch(deleteCategoryAction(id));
+          dispatch(getAllCategory());
+
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil!",
+            text: "Kategori berhasil dihapus ✅",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } catch (error) {
+          console.error("Error deleting category:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Gagal!",
+            text: "Kategori gagal dihapus ❌",
+          });
+        }
+      }
+    });
+  };
+
+  const handleUpdate = async () => {
+    if (!editCategory || !editCategory.name.trim()) return;
+
+    try {
+      await dispatch(updateCategoryAction(editCategory.id, { nama_kategori: editCategory.name }));
+      dispatch(getAllCategory());
+      setEditCategory(null);
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Kategori berhasil diperbarui ✨",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error("Error updating category:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Kategori gagal diperbarui ❌",
+      });
     }
   };
 
   const handleEdit = (id, name) => {
     setEditCategory({ id, name });
   };
-
-  const handleUpdate = () => {
-    if (!editCategory || !editCategory.name.trim()) return;
-
-    const updatedData = { nama_kategori: editCategory.name };
-    dispatch(updateCategoryAction(editCategory.id, updatedData));
-    setEditCategory(null);
-  };
+  const filteredCategories = categories.filter((cat) =>
+    cat.nama_kategori.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-green-100 to-green-50">
-      <div className="w-64 text-white min-h-screen fixed top-0 left-0">
-        <Sidebar />
-      </div>
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <Sidebar />
 
-      <main className="flex-1 pt-10 pb-16 px-4 sm:px-6 md:px-8 md:ml-64 flex flex-col sm:flex-row justify-center items-start min-h-screen">
-        <div className="w-full max-w-full sm:max-w-xl md:max-w-4xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
-          <h2 className="text-2xl font-bold text-green-700 mb-8 text-center">
-            🌿 Manajemen Kategori Tumbuhan
-          </h2>
+      {/* Main Content */}
+      <div className="flex-1 w-full max-w-5xl mx-auto p-4 sm:p-6 bg-white rounded-[20px] shadow-lg space-y-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl font-semibold text-green-700">🌿 Manajemen Kategori</h1>
 
-          {/* Form Tambah */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8 items-stretch sm:items-center justify-center">
+          <div className="relative w-full sm:w-auto">
             <input
               type="text"
-              placeholder="Tambah kategori baru"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+              placeholder="Cari kategori..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full sm:w-[240px] h-10 pl-4 pr-10 rounded-lg border border-gray-300 shadow-sm text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-green-400"
             />
-            <button
-              onClick={handleAdd}
-              className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2 mt-2 sm:mt-0"
-            >
-              <Plus className="w-5 h-5" /> Tambah
-            </button>
-          </div>
-
-          {/* Tabel Kategori */}
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 text-left min-w-[320px]">
-              <thead className="bg-green-100 text-green-800">
-                <tr>
-                  <th className="p-4 border-b">#</th>
-                  <th className="p-4 border-b">Nama Kategori</th>
-                  <th className="p-4 border-b text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categories.length > 0 ? (
-                  categories.map((cat, index) => (
-                    <tr key={cat.id} className="hover:bg-green-50">
-                      <td className="p-4 border-b">{index + 1}</td>
-                      <td className="p-4 border-b">{cat.nama_kategori}</td>
-                      <td className="p-4 border-b text-right space-x-3">
-                        <button
-                          onClick={() => handleEdit(cat.id, cat.nama_kategori)}
-                          className="text-blue-600 hover:text-blue-800 transition"
-                          aria-label={`Edit kategori ${cat.nama_kategori}`}
-                        >
-                          <Pencil className="inline w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(cat.id)}
-                          className="text-red-600 hover:text-red-800 transition"
-                          aria-label={`Hapus kategori ${cat.nama_kategori}`}
-                        >
-                          <Trash2 className="inline w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="p-6 text-center text-gray-500">
-                      Belum ada kategori.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <div className="absolute right-3 top-2.5 text-gray-400">🔍</div>
           </div>
         </div>
 
-        {/* Panggil komponen modal EditCategoryModal dan kirim propsnya */}
-        <EditCategoryModal
-          editCategory={editCategory}
-          setEditCategory={setEditCategory}
-          handleUpdate={handleUpdate}
-        />
-      </main>
+        {/* Form Tambah */}
+        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+          <input
+            type="text"
+            placeholder="Tambah kategori baru..."
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
+          <button
+            onClick={handleAdd}
+            className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-md"
+          >
+            <Plus className="w-5 h-5" />
+            Tambah
+          </button>
+        </div>
+
+        {/* Tabel Kategori */}
+        <div className="mt-6">
+          {/* Desktop Table */}
+          <div className="hidden sm:block">
+            <div className="grid grid-cols-3 text-gray-500 text-sm font-medium border-b border-gray-200 pb-2">
+              <div>No</div>
+              <div>Nama Kategori</div>
+              <div className="text-right">Aksi</div>
+            </div>
+
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((cat, index) => (
+                <div
+                  key={cat.id}
+                  className={`grid grid-cols-3 items-center text-sm py-4 border-b ${
+                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  }`}
+                >
+                  <div>{index + 1}</div>
+                  <div>
+                    <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                      {cat.nama_kategori}
+                    </span>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => handleEdit(cat.id, cat.nama_kategori)}
+                      className="p-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-600"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cat.id)}
+                      className="p-2 bg-red-100 hover:bg-red-200 rounded-lg text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-500 py-6">Tidak ada kategori ditemukan.</div>
+            )}
+          </div>
+
+          {/* Mobile Card List */}
+          <div className="sm:hidden space-y-4">
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((cat, index) => (
+                <div
+                  key={cat.id}
+                  className="p-4 rounded-xl border border-gray-200 shadow-sm bg-white flex justify-between items-center"
+                >
+                  <div>
+                    <p className="text-xs text-gray-400">No. {index + 1}</p>
+                    <p className="font-medium text-gray-700">{cat.nama_kategori}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(cat.id, cat.nama_kategori)}
+                      className="p-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-600"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cat.id)}
+                      className="p-2 bg-red-100 hover:bg-red-200 rounded-lg text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-500 py-6">Tidak ada kategori ditemukan.</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Edit */}
+      <EditCategoryModal
+        editCategory={editCategory}
+        setEditCategory={setEditCategory}
+        handleUpdate={handleUpdate}
+      />
     </div>
   );
 };

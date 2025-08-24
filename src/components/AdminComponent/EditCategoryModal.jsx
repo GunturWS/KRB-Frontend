@@ -1,21 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { updateCategoryAction } from "../../redux/actions/categoryActions";
+import { updateCategoryAction, getAllCategory } from "../../redux/actions/categoryActions";
+import Swal from "sweetalert2";
 
 export const EditCategoryModal = ({ editCategory, setEditCategory }) => {
   const dispatch = useDispatch();
+  const [categoryName, setCategoryName] = useState("");
+
+  useEffect(() => {
+    if (editCategory) {
+      setCategoryName(editCategory.name); // sinkronkan state input
+    }
+  }, [editCategory]);
 
   if (!editCategory) return null;
 
-  const handleUpdate = () => {
-    if (!editCategory.name || editCategory.name.trim() === "") return;
+  const handleUpdate = async () => {
+    if (!categoryName.trim()) return;
 
-    const payload = {
-      nama_kategori: editCategory.name, // sesuai format backend
-    };
+    const payload = { nama_kategori: categoryName };
 
-    dispatch(updateCategoryAction(editCategory.id, payload));
-    setEditCategory(null);
+    try {
+      await dispatch(updateCategoryAction(editCategory.id, payload));
+      await dispatch(getAllCategory()); // refresh data
+      setEditCategory(null);
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Kategori berhasil diperbarui ✨",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error("Error updating category:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Kategori gagal diperbarui ❌",
+      });
+    }
   };
 
   return (
@@ -24,8 +48,8 @@ export const EditCategoryModal = ({ editCategory, setEditCategory }) => {
         <h3 className="text-xl font-bold text-green-700 mb-6 text-center">Edit Kategori</h3>
         <input
           type="text"
-          value={editCategory.name}
-          onChange={(e) => setEditCategory({ ...editCategory, name: e.target.value })}
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
           className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
           placeholder="Nama kategori"
           autoFocus

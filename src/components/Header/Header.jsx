@@ -15,7 +15,7 @@ export const Header = () => {
     { to: "/konservasi", label: "Konservasi" },
     { to: "/tentang-kami", label: "Tentang Kami" },
     { to: "/lokasi-kontak", label: "Location & Contact" },
-    // { to: "/faq-fasilitas", label: "FAQ & Fasilitas" },
+    { to: "/admin/login", label: "Admin" },
   ];
 
   return (
