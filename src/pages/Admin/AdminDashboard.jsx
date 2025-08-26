@@ -36,20 +36,36 @@ const AdminDashboard = () => {
   const currentItems = filteredPlants.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredPlants.length / itemsPerPage);
 
+  // utils/textUtils.js
+  const truncateSentences = (text, limit = 1) => {
+    if (!text) return "";
+    const sentences = text.split(/(?<=[.!?])\s+/); // pisah berdasarkan tanda titik, ? atau !
+    return sentences.slice(0, limit).join(" ") + (sentences.length > limit ? "..." : "");
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Konten utama */}
-      <main className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-6">
+      <main
+        className="
+          flex-1
+          px-3 sm:px-4 md:px-6 lg:px-8 py-6
+          transition-all duration-300
+          ml-0 md:ml-[80px] lg:ml-[260px]
+        "
+      >
         <div className="w-full max-w-6xl mx-auto bg-white rounded-[20px] shadow-[0_10px_60px_rgba(226,236,249,0.5)] p-4 sm:p-6 space-y-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h1 className="text-xl sm:text-2xl font-medium font-poppins text-black">
               Hello Admin 👋🏼
             </h1>
-            <div className="relative w-full sm:w-[280px] md:w-[320px]">
+            <div className="relative w-full md:w-[320px]">
+              {" "}
+              {/* Adjusted for better mobile view */}
               <input
                 type="text"
                 placeholder="Search plants..."
@@ -69,7 +85,9 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-400">Total Tumbuhan</p>
-                <span className="text-base md:text-lg text-gray-700">{totalTumbuhan}</span>
+                <span className="text-base md:text-lg text-gray-700 font-bold">
+                  {totalTumbuhan}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 shadow-sm bg-gray-50">
@@ -78,7 +96,9 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-400">Total Kategori</p>
-                <span className="text-base md:text-lg text-gray-700">{totalCategory}</span>
+                <span className="text-base md:text-lg text-gray-700 font-bold">
+                  {totalCategory}
+                </span>
               </div>
             </div>
           </div>
@@ -93,21 +113,12 @@ const AdminDashboard = () => {
             {/* Desktop & Tablet Table */}
             <div className="hidden md:block overflow-x-auto">
               <div className="grid grid-cols-6 text-gray-400 text-sm font-medium border-b border-gray-200 pb-3 min-w-[800px]">
-                {[
-                  "Gambar",
-                  "Nama Tumbuhan",
-                  "Nama Indonesia",
-                  "Kategori",
-                  "Deskripsi",
-                  "Status",
-                ].map((heading) => (
-                  <div
-                    key={heading}
-                    className={`px-4 ${heading === "Status" ? "text-center" : ""}`}
-                  >
-                    {heading}
-                  </div>
-                ))}
+                <div className="px-4">Gambar</div>
+                <div className="px-4">Nama Tumbuhan</div>
+                <div className="hidden md:block px-4">Nama Indonesia</div>
+                <div className="px-4">Kategori</div>
+                <div className="hidden md:block px-4">Deskripsi</div>
+                <div className="px-4 text-center">Status</div>
               </div>
 
               {currentItems.map((plant) => (
@@ -122,7 +133,8 @@ const AdminDashboard = () => {
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                   </div>
-                  <div className="px-4">{plant.nama_tumbuhan}</div>
+                  <div className="px-4 font-medium">{plant.nama_tumbuhan}</div>{" "}
+                  {/* Added font-medium */}
                   <div className="px-2">{plant.nama_indonesia}</div>
                   <div className="px-4">{plant.kategori}</div>
                   <div className="px-4 truncate">{plant.deskripsi}</div>
@@ -155,14 +167,15 @@ const AdminDashboard = () => {
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div>
-                      <p className="font-medium">{plant.nama_tumbuhan}</p>
+                      <p className="text-base font-bold text-gray-800">{plant.nama_tumbuhan}</p>{" "}
+                      {/* Enhanced for mobile */}
                       <p className="text-sm text-gray-500">{plant.nama_indonesia}</p>
                     </div>
                   </div>
                   <p className="text-sm">
                     <span className="font-semibold">Kategori:</span> {plant.kategori}
                   </p>
-                  <p className="text-sm text-gray-600">{plant.deskripsi}</p>
+                  <p className="text-sm text-gray-600">{truncateSentences(plant.deskripsi, 1)}</p>
                   <span
                     className={`inline-block mt-2 px-3 py-1 rounded text-sm font-medium border ${
                       status === "Active"
@@ -177,38 +190,56 @@ const AdminDashboard = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 gap-4 text-sm text-gray-500">
-              <div>
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 text-sm text-gray-600">
+              {/* Info */}
+              <div className="text-center sm:text-left">
                 Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredPlants.length)}{" "}
                 of {filteredPlants.length} entries
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Page Numbers */}
+              <div className="flex items-center gap-1 flex-wrap justify-center">
+                {/* Prev Button */}
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-2 py-1 rounded border text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  &lt;
+                  Prev
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => setCurrentPage(n)}
-                    className={`px-3 py-1 rounded border ${
-                      n === currentPage
-                        ? "bg-indigo-600 text-white border-indigo-600"
-                        : "text-gray-700 hover:bg-gray-100 border-gray-300"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
+
+                {/* Page Number Logic */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((n) => {
+                    // hanya tampilkan halaman sekitar currentPage
+                    return (
+                      n === 1 || n === totalPages || (n >= currentPage - 1 && n <= currentPage + 1)
+                    );
+                  })
+                  .map((n, idx, arr) => (
+                    <React.Fragment key={n}>
+                      {/* Tambah ellipsis jika loncatan */}
+                      {idx > 0 && arr[idx - 1] !== n - 1 && <span className="px-2">...</span>}
+                      <button
+                        onClick={() => setCurrentPage(n)}
+                        className={`px-3 py-1.5 rounded-lg border transition ${
+                          n === currentPage
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "text-gray-700 hover:bg-gray-100 border-gray-300"
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    </React.Fragment>
+                  ))}
+
+                {/* Next Button */}
                 <button
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-2 py-1 rounded border text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  &gt;
+                  Next
                 </button>
               </div>
             </div>

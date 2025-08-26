@@ -76,11 +76,11 @@ export const adminLogout = (navigate) => async (dispatch) => {
     dispatch(setToken(null));
     dispatch(setUser(null));
 
-    toast.success("Logout berhasil");
+    // toast.success("Logout berhasil");
     navigate("/admin/login");
   } catch (error) {
     console.error("Error logging out:", error);
-    toast.error("Logout gagal. Silakan coba lagi.");
+    // toast.error("Logout gagal. Silakan coba lagi.");
   }
 };
 
