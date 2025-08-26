@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSeedling, FaThList, FaHome, FaSignOutAlt, FaBars, FaUserCircle } from "react-icons/fa";
 import { adminLogout } from "../../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 const menuData = [
   { href: "/admin/dashboard", icon: <FaHome />, label: "Dashboard" },
@@ -20,9 +21,23 @@ export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false); // desktop collapse
   const [mobileOpen, setMobileOpen] = useState(false); // mobile open/close
 
-  const handleLogout = () => {
-    dispatch(adminLogout(navigate));
-  };
+const handleLogout = () => {
+  Swal.fire({
+    title: "Yakin mau keluar?",
+    text: "Anda akan keluar dari akun admin.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, keluar",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      dispatch(adminLogout(navigate));
+      Swal.fire("Berhasil!", "Anda sudah logout.", "success");
+    }
+  });
+};
 
   // auto close sidebar ketika pindah halaman (mobile)
   useEffect(() => {

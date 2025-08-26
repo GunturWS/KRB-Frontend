@@ -201,38 +201,56 @@ const handleDelete = (id) => {
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-sm text-gray-500">
-          <div>
-            Menampilkan data {filteredPlants.length > 0 ? indexOfFirstItem + 1 : 0} sampai{" "}
-            {Math.min(indexOfLastItem, filteredPlants.length)} dari {filteredPlants.length} tumbuhan
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 text-sm text-gray-600">
+          {/* Info */}
+          <div className="text-center sm:text-left">
+            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredPlants.length)} of{" "}
+            {filteredPlants.length} entries
           </div>
-          <div className="flex items-center gap-1 flex-wrap">
+
+          {/* Page Numbers */}
+          <div className="flex items-center gap-1 flex-wrap justify-center">
+            {/* Prev Button */}
             <button
-              className="px-2 py-1 rounded border text-gray-600 hover:bg-gray-100"
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              className="px-3 py-1.5 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              &lt;
+              Prev
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-              <button
-                key={pageNum}
-                className={`px-3 py-1 rounded border ${
-                  currentPage === pageNum
-                    ? "bg-indigo-600 text-white border-indigo-600"
-                    : "text-gray-700 hover:bg-gray-100 border-gray-300"
-                }`}
-                onClick={() => handlePageChange(pageNum)}
-              >
-                {pageNum}
-              </button>
-            ))}
+
+            {/* Page Number Logic */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => {
+                // hanya tampilkan halaman sekitar currentPage
+                return (
+                  n === 1 || n === totalPages || (n >= currentPage - 1 && n <= currentPage + 1)
+                );
+              })
+              .map((n, idx, arr) => (
+                <React.Fragment key={n}>
+                  {/* Tambah ellipsis jika loncatan */}
+                  {idx > 0 && arr[idx - 1] !== n - 1 && <span className="px-2">...</span>}
+                  <button
+                    onClick={() => setCurrentPage(n)}
+                    className={`px-3 py-1.5 rounded-lg border transition ${
+                      n === currentPage
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "text-gray-700 hover:bg-gray-100 border-gray-300"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                </React.Fragment>
+              ))}
+
+            {/* Next Button */}
             <button
-              className="px-2 py-1 rounded border text-gray-600 hover:bg-gray-100"
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
+              className="px-3 py-1.5 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              &gt;
+              Next
             </button>
           </div>
         </div>
