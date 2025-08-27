@@ -17,6 +17,7 @@ const AdminPlant = () => {
   const [editPlant, setEditPlant] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [collapsed, setCollapsed] = useState(false);
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -44,34 +45,40 @@ const AdminPlant = () => {
     dispatch(getAllCategory());
   }, [dispatch]);
 
-const handleDelete = (id) => {
-  Swal.fire({
-    title: "Yakin ingin menghapus tanaman ini?",
-    text: "Data yang dihapus tidak bisa dikembalikan!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Ya, hapus!",
-    cancelButtonText: "Batal",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      dispatch(deletePlant(id));
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Yakin ingin menghapus tanaman ini?",
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deletePlant(id));
 
-      Swal.fire({
-        icon: "success",
-        title: "Terhapus!",
-        text: "Tanaman berhasil dihapus ✅",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    }
-  });
-};
+        Swal.fire({
+          icon: "success",
+          title: "Terhapus!",
+          text: "Tanaman berhasil dihapus ✅",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  };
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <main className="flex-1 w-full max-w-6xl mx-auto p-4 sm:p-6 md:p-8 bg-white rounded-[20px] shadow-[0_10px_60px_rgba(226,236,249,0.5)] space-y-6">
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+
+      {/* Main Content */}
+      <main
+        className={`flex-1 transition-all duration-300 p-4 sm:p-6 md:p-8 bg-white rounded-[20px] 
+    shadow-[0_10px_60px_rgba(226,236,249,0.5)] space-y-6 
+    ${collapsed ? "lg:ml-[80px]" : "lg:ml-[260px]"}`}
+      >
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-xl sm:text-2xl font-medium font-poppins text-black">
