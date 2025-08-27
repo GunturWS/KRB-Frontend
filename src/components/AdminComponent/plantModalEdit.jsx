@@ -92,8 +92,12 @@ export const PlantModalEdit = ({ isOpen, onSubmit, onClose, editPlant }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white p-6 rounded-xl max-w-lg w-full shadow-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 h-screen px-4">
+      {/* Wrapper untuk modal dengan scroll */}
+      <div
+        className="bg-white p-6 rounded-xl w-full max-w-2xl md:max-w-xl sm:max-w-lg shadow-lg relative 
+                  max-h-[90vh] overflow-y-auto"
+      >
         <h2 className="text-xl font-bold mb-4">Edit Tumbuhan</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
