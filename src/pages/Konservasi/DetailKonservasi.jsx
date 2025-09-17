@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getPlantById, getPlantByIdNew } from "../../redux/actions/plantActions";
+import { getPlantByIdNew } from "../../redux/actions/plantActions";
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 
 const DetailKonservasi = () => {
-  const { id } = useParams();
+  const { idSlug } = useParams();
+  const id = idSlug.split("-")[0]; // ambil ID sebelum tanda "-"
   const dispatch = useDispatch();
 
   // Ambil data dan loading dari redux state
@@ -16,8 +17,6 @@ const DetailKonservasi = () => {
   const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch data tanaman berdasarkan id
-    // dispatch(getPlantById(Number(id)));
     dispatch(getPlantByIdNew(Number(id)));
 
     // Set loading minimal 1 detik

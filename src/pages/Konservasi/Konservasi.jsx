@@ -122,7 +122,9 @@ const Konservasi = () => {
                     image_path={item.image_path}
                     nama_tumbuhan={namaTumbuhan}
                     kategori={item.categories}
-                    href={`/detail-konservasi/${item.id}`} // tetap pakai primary key
+                    href={`/detail-konservasi/${item.id}-${item.dataset_name
+                      .replace(/\s+/g, "-")
+                      .toLowerCase()}`}
                   />
                 );
               })}

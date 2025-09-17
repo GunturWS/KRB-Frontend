@@ -47,6 +47,30 @@ export const getPlantById = (id) => async (dispatch) => {
   }
 };
 
+export const getPlantByName = (nama) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    // Ambil semua plants
+    const response = await axios.get(`${api_url}/api/plants`);
+    const plants = response.data;
+
+    // Cari plant berdasarkan nama_tumbuhan
+    const found = plants.find((plant) => plant.nama_tumbuhan.toLowerCase() === nama.toLowerCase());
+
+    if (found) {
+      // Kalau ketemu, panggil lagi getPlantById
+      dispatch(getPlantById(found.id));
+      return found.id; // supaya bisa dipakai navigate
+    } else {
+      dispatch(setError("Tanaman tidak ditemukan"));
+    }
+  } catch (error) {
+    dispatch(setError(error.message));
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
 /////////// ADMIN
 
 export const getAllPlantsNew = () => async (dispatch) => {
@@ -71,16 +95,35 @@ export const getPlantByIdNew = (id) => async (dispatch) => {
     const response = await axios.get(`${api_url}/api/admin/plants/${id}`);
     const data = response.data; // Asumsi data ada di response.data
 
-    // console.log(data);
-
-    dispatch(setPlantDetail(data.data)); // Menyimpan detail tanaman ke Redux
-    console.log(data);
-  } catch (error) {
-    dispatch(setError(error.message));
+    dispatch(setPlantDetail(data.data)); // Simpan detail tanaman ke Redux
   } finally {
     dispatch(setLoading(false));
   }
 };
+
+
+export const getPlantByNameHack = (dataset_name) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const response = await axios.get(`${api_url}/api/admin/plants`);
+    const plants = response.data.data;
+
+    // Cari plant dengan dataset_name yang sama
+    const found = plants.find((p) => p.dataset_name.toLowerCase() === dataset_name.toLowerCase());
+
+    if (found) {
+      dispatch(setPlantDetail(found));
+      return found; // ✅ return biar bisa dipakai di handleViewDetail
+    }
+  } catch (error) {
+    // sengaja kosong, tidak perlu error message
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+
+
 // export const addPlantNew = (newPlant) => async (dispatch) => {
 //   try {
 //     dispatch(setLoading(true));
