@@ -5,13 +5,14 @@ import { predictPlant } from "../../redux/actions/predictActions";
 import { resetPrediction } from "../../redux/reducers/predictReducers";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { getPlantByNameHack } from "../../redux/actions/plantActions";
 
 export const MemindaiPopUp = ({ onClose }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { prediction, dataset_id, error } = useSelector((state) => state.prediction);
+  const { prediction, error } = useSelector((state) => state.prediction);
 
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
@@ -41,12 +42,39 @@ export const MemindaiPopUp = ({ onClose }) => {
     onClose();
   };
 
-  const handleViewDetail = () => {
-    if (dataset_id) {
-      onClose();
-      navigate(`/detail-konservasi/${dataset_id}`);
-    } else {
-      alert("Tidak ada ID dataset untuk melihat detail.");
+  // const handleViewDetail = async () => {
+  //   if (prediction?.prediction?.nama_tumbuhan) {
+  //     const plantName = prediction.prediction.nama_tumbuhan;
+
+  //     // cari data plant dari nama → dapat id
+  //     const found = await dispatch(getPlantByNameHack(plantName));
+
+  //     if (found) {
+  //       onClose();
+  //       navigate(`/detail-konservasi/${found.id}`); // ✅ pakai ID di URL
+  //     }
+  //   } else {
+  //     alert("Tidak ada nama tumbuhan untuk melihat detail.");
+  //   }
+  // };
+  const handleViewDetail = async () => {
+    if (prediction?.prediction?.nama_tumbuhan) {
+      const plantName = prediction.prediction.nama_tumbuhan;
+
+      // cari data plant dari nama → dapat id
+      const found = await dispatch(getPlantByNameHack(plantName));
+
+      if (found) {
+        onClose();
+
+        // bikin slug rapih dari nama_tumbuhan atau dataset_name
+        const slug = found.nama_tumbuhan
+          ? found.nama_tumbuhan.replace(/\s+/g, "-").toLowerCase()
+          : found.dataset_name.replace(/\s+/g, "-").toLowerCase();
+
+        // navigate pakai ID + slug
+        navigate(`/detail-konservasi/${found.id}-${slug}`);
+      }
     }
   };
 
